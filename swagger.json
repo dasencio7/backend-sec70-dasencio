@@ -1,0 +1,420 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Energy and Water",
+        "description": "Servidor utilizado para la evaluación 3 de la Unidad 3. Puede obtener más información sobre Swagger en [http://swagger.io](http://swagger.io) o en [irc.freenode.net, #swagger](http://swagger.io/irc/). <br><br>Para este ejemplo, puede utilizar las siguientes claves de API para métodos:<ul><li>Método GET - Authorization Bearer: `get`</li><li>Método POST - Authorization Bearer: `post`</li><li>Método PATCH - Authorization Bearer: `patch`</li><li>Método PUT - Authorization Bearer: `put`</li><li>Método DELETE - Authorization Bearer: `delete`</li></ul>.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost/eval_u3_backend_dasencio/v2",
+            "description": "Ambiente Desarrollo / Testing (QA) / Produccion"
+        },
+        {
+            "url": "http://localhost/eval_u2_backend_dasencio/v1",
+            "description": "Class Server"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Info-Contacto",
+            "description": "Información de contacto",
+            "externalDocs": {
+                "description": "EVA",
+                "url": "http://eva.ciisa.cl"
+            }
+        }
+    ],
+    "paths": {
+        "/info-contacto/": {
+            "get": {
+                "tags": [
+                    "Info-Contacto"
+                ],
+                "summary": "Retorna todos los contactos de informacion del cliente",
+                "description": "Retorna una lista de objetos que incluye: id, nombre, icono, texto, texto_adicional y activo. Expected response time: < 200ms. Optimization Tips: - Use pagination parameters to limit the number of results. - Enable gzip compression for faster data transfer.",
+                "x-rateLimit": {
+                    "limit": 60,
+                    "window": 60
+                },
+                "x-cache": {
+                    "cacheable": true,
+                    "ttl": 3600
+                },
+                "responses": {
+                    "200": {
+                        "description": "Respuesta exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfoContactoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: Sin Autorización"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimitExceeded"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuthGet": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Info-Contacto"
+                ],
+                "summary": "Crea un nuevo contacto de informacion del cliente",
+                "description": "Crea un objeto que incluye: id, nombre, icono, texto, texto_adicional y activo. Expected response time: < 200ms.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InfoContactoCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Creación exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResultadoOk"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Error: Conflicto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictoExiste"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: Sin Autorización"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuthPost": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Info-Contacto"
+                ],
+                "summary": "Apagar o Encender un objeto",
+                "description": "Apaga o Enciende un objeto básico, deja activo en false o true respectivamente. Expected response time: < 200ms.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "ID del objeto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "accion",
+                        "in": "query",
+                        "description": "La acción es requerida para la ejecución.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "apagar",
+                                "encender"
+                            ],
+                            "default": "apagar"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cambio exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResultadoOk"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: Sin Autorización"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuthPatch": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Info-Contacto"
+                ],
+                "summary": "Modifica los datos de un objeto",
+                "description": "Se puede sólo modificar el campo `nombre`. Expected response time: < 200ms.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InfoContactoUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Actualización exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResultadoOk"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: Sin Autorización"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuthPut": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Info-Contacto"
+                ],
+                "summary": "Eliminar un objeto",
+                "description": "Elimina un objeto básico, lo borra de la base de datos. Expected response time: < 200ms.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "ID del objeto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eliminación exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResultadoOk"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: Sin Autorización"
+                    },
+                    "404": {
+                        "description": "Error: No encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictoExiste"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "Error: No implementado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuthDelete": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuthGet": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            },
+            "bearerAuthPost": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            },
+            "bearerAuthPatch": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            },
+            "bearerAuthPut": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            },
+            "bearerAuthDelete": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "responses": {
+            "RateLimitExceeded": {
+                "description": "Rate limit has been exceeded.",
+                "headers": {
+                    "X-Rate-Limit-Limit": {
+                        "description": "The number of allowed requests in the current period.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "X-Rate-Limit-Remaining": {
+                        "description": "The number of remaining requests in the current period.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "X-Rate-Limit-Reset": {
+                        "description": "The number of seconds until the rate limit resets.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "ResultadoOk": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "ConflictoExiste": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                }
+            },
+            "InfoContactoItem": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "0"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "nuevo objeto"
+                    },
+                    "icono": {
+                        "type": "string",
+                        "example": "<i class='fa fa-user'></i>"
+                    },
+                    "texto": {
+                        "type": "string",
+                        "example": "contacto@energyandwater.cl"
+                    },
+                    "texto_adicional": {
+                        "type": "string",
+                        "example": "mailto:contacto@energyandwater.cl"
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "InfoContactoUpdate": {
+                "type": "object",
+                "properties": {
+                    "info_contacto": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "example": "1"
+                            },
+                            "nombre": {
+                                "type": "string",
+                                "example": "email"
+                            }
+                        }
+                    }
+                }
+            },
+            "InfoContactoCreate": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "0"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "nuevo objeto"
+                    },
+                    "icono": {
+                        "type": "string",
+                        "example": "<i class='fa fa-user'></i>"
+                    },
+                    "texto": {
+                        "type": "string",
+                        "example": "contacto@energyandwater.cl"
+                    },
+                    "texto_adicional": {
+                        "type": "string",
+                        "example": "mailto:contacto@energyandwater.cl"
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "InfoContactoResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/InfoContactoItem"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
